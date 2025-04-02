@@ -2,7 +2,7 @@
 import { Fragment, useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { AtSign, CheckCheck, Paperclip, Pencil } from "lucide-react";
+import { AtSign, CheckCheck, Paperclip, Pencil, Send } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { getChatsHistory } from "@/Service/auth.service";
 import WebSocketComponent from "@/Routes/Websocket";
@@ -247,9 +247,9 @@ export default function Chatsmessage({
 
   return (
     <Fragment>
-      <div className="p-1 w-full  h-full flex flex-col ">
+      <div className="p-1 w-full h-full flex flex-col ">
         {/* Chat Header */}
-        <div className="flex items-center justify-between gap-4 sticky  z-10 min-h-[60px] p-4  border-b border-gray-200 ">
+        <div className="flex items-center justify-between gap-4 sticky   z-10 min-h-[60px] p-4 ">
           <Avatar className="w-10 h-10">
             <AvatarImage src={image} alt="User Avatar" />
             <AvatarFallback className="bg-gray-200  text-gray-600 text-lg">
@@ -275,7 +275,7 @@ export default function Chatsmessage({
 
         {/* Chat Messages Container */}
         <div
-          className="flex-grow p-2 bg-white   flex flex-col gap-3 overflow-y-auto h-[calc(100vh-200px)] custom-scrollbar"
+          className="flex-grow p-2  flex flex-col gap-3 overflow-y-auto h-[calc(100vh-200px)] custom-scrollbar"
           ref={chatContainerRef}
         >
           {renderMessages()}
@@ -283,10 +283,10 @@ export default function Chatsmessage({
         </div>
 
         {/* Message Input Form */}
-        <div className="p-4 sticky bottom-0 z-10 bg-white dark:bg-gray-900  border-gray-300 ">
+        <div className="px-4 sticky bottom-0 z-10  text-xs  ">
           <form
             onSubmit={handleChatsSubmit}
-            className="flex items-center bg-gray-100  rounded-lg p-2 border border-gray-300  focus-within:ring-2 focus-within:ring-black"
+            className="flex items-center   rounded-md p-3  border  "
           >
             <TooltipProvider>
               {/* Paperclip Icon */}
@@ -296,37 +296,7 @@ export default function Chatsmessage({
                     type="button"
                     className="p-2 text-gray-500 hover:text-gray-700"
                   >
-                    <Paperclip className="w-5 h-5" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent>
-                <p>Coming Soon</p>
-                </TooltipContent>
-              </Tooltip>
-
-              {/* @ Mention Icon */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    className="p-2 text-gray-500 hover:text-gray-700"
-                  >
-                    <AtSign className="w-5 h-5" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent>
-                <p>Coming Soon</p>
-                </TooltipContent>
-              </Tooltip>
-
-              {/* Pencil Icon */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    className="p-2 text-gray-500 hover:text-gray-700"
-                  >
-                    <Pencil className="w-5 h-5" />
+                    <Paperclip className="w-3 h-3" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -345,7 +315,7 @@ export default function Chatsmessage({
                 })
               }
               placeholder="Type a message..."
-              className="flex-1 text-sm p-2 bg-transparent outline-none text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+              className="flex-1 text-xs outline-none placeholder:text-xs "
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
@@ -355,13 +325,14 @@ export default function Chatsmessage({
             />
 
             {/* Send Button */}
-            <button
+            <Button
               type="submit"
-              className="ml-2 px-4 text-xs py-2 bg-black hover:bg-gray-800 text-white rounded-xl transition-all duration-300 shadow-md"
+              className=" text-xs"
               size="sm"
+              variant="outline"
             >
-              Send
-            </button>
+              <Send className="w-1 h-1" /> Send
+            </Button>
           </form>
         </div>
       </div>
@@ -397,7 +368,9 @@ const Message = ({ message, isIncoming, avatarSrc }) => {
             isIncoming ? "bg-gray-100 text-gray-800" : "bg-black text-white"
           }`}
         >
-          <p className="break-all truncate text-ellipsis text-xs text-wrap">{message.text}</p>
+          <p className="break-all truncate text-ellipsis text-xs text-wrap">
+            {message.text}
+          </p>
         </div>
 
         {/* Timestamp & Read Receipts */}

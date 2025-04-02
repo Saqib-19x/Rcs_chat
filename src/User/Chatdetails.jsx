@@ -93,19 +93,13 @@ export default function Chatdetails({ phoneNumber, campaignHistory }) {
         {/* add profile */}
 
         <div className="flex flex-col items-center justify-center text-center border-b p-2">
-
           <div className="flex justify-center w-12 h-12 border-2 border-blue-500 items-center rounded-full">
-            <p className="font-semibold ">
-              {phoneNumber.slice(-2)}
-            </p>
+            <p className="font-semibold ">{phoneNumber.slice(-2)}</p>
           </div>
 
-          <h3 className="text-xs font-semibold text-gray-900">
-            {"Leslie Alexander"}
+          <h3 className="text-xs font-semibold text-gray-900 mt-1">
+            {phoneNumber}
           </h3>
-          <p className="text-xs text-muted-foreground">
-            {"Co-Founder at Uxcel"}
-          </p>
         </div>
 
         {/* Scrollable Content */}
@@ -114,21 +108,20 @@ export default function Chatdetails({ phoneNumber, campaignHistory }) {
           <div className="flex flex-col p-4">
             <div className="flex items-center gap-2 mb-2">
               <Send className="w-3 h-3 text-primary" />
-              <span className="text-sm">
-                Campaign Name:{" "}
+              <span className="text-xs font-semibold">Campaign Name: </span>
+
+              <p className="text-xs">
                 {campaignHistory?.latest?.campaignName || "Direct Message"}
-              </span>
+              </p>
             </div>
 
             <div className="flex items-center gap-2 mb-2">
               <LayoutPanelTop className="w-3 h-3 text-primary" />
-              <span className="text-sm">
-                Template Name:{" "}
+              <span className="text-xs font-semibold">Template Name: </span>
+              <p className="text-xs">
                 {campaignHistory?.latest?.templateName || "Custom Message"}
-              </span>
+              </p>
             </div>
-
-  
 
             {/* You can add more fields as needed */}
           </div>
