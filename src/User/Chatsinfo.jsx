@@ -9,7 +9,7 @@ import Chatsmessage from "./Chatsmessage";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import Chatdetails from "./Chatdetails";
 import WebSocketComponent from "@/Routes/Websocket";
-import { Info, ListFilter, MessageSquare, Search } from "lucide-react";
+import { Info, ListFilter, MessageSquare, Search, Star } from "lucide-react";
 import { ArrowUpRight, ArrowDownLeft } from "lucide-react"; // WhatsApp-style arrows
 
 import { Card } from "@/components/ui/card";
@@ -227,184 +227,213 @@ export default function ChatInfo() {
   };
 
   return (
-<Fragment>
-  <AgentsLayout>
-    <Helmet>
-      <title>Chats | RCS Celetel</title>
-    </Helmet>
-    <WebSocketComponent onMessage={handleWebSocketMessage} ref={webSocketRef} />
+    <Fragment>
+      <AgentsLayout>
+        <Helmet>
+          <title>Chats | RCS Celetel</title>
+        </Helmet>
+        <WebSocketComponent
+          onMessage={handleWebSocketMessage}
+          ref={webSocketRef}
+        />
 
-    <div className="flex flex-col md:flex-row p-2 mt-2 h-[calc(100vh-70px)] space-x-0 md:space-x-2 overflow-hidden">
+        <div className="flex flex-col md:flex-row p-2 mt-2 h-[calc(100vh-75px)] space-x-0 md:space-x-2 overflow-hidden">
+          {/* Sidebar */}
+          {/* <div className=" h-full"> */}
 
+          <Card className=" w-[25%] md:w-[25%]  flex flex-col">
+            <div className="p-3 flex justify-between items-center shadow-sm rounded-lg">
+              <div className="flex items-center gap-1">
+                <h2 className="text-base font-semibold text-gray-900">Chats</h2>
+                <span className="text-xs text-muted-foreground">
+                  (
+                  {
+                    chatsLists.filter((chat) => !chat.recentMessage?.isRead)
+                      .length
+                  }{" "}
+                  unread)
+                </span>
+              </div>
 
-      {/* Sidebar */}
-      {/* <div className=" h-full"> */}
-
-        <Card className=" w-[25%] md:w-[25%]  flex flex-col">
-          <div className="p-3 flex justify-between items-center shadow-sm rounded-lg">
-            <div className="flex items-center gap-1">
-              <h2 className="text-base font-semibold text-gray-900">Chats</h2>
-              <span className="text-xs text-muted-foreground">
-                (
-                {
-                  chatsLists.filter((chat) => !chat.recentMessage?.isRead)
-                    .length
-                }{" "}
-                unread)
-              </span>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    size="xs"
+                    variant="outline"
+                    disabled={loading || labels.length === 0}
+                    className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md border-gray-300 shadow-sm"
+                  >
+                    <ListFilter className="w-4 h-4 text-gray-500" /> {position}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-40 p-2 shadow-md rounded-md">
+                  <DropdownMenuLabel className="flex justify-center text-xs font-medium text-gray-700">
+                    Select Labels
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {error ? (
+                    <p className="text-xs text-red-500 px-2">{error}</p>
+                  ) : labels.length === 0 ? (
+                    <p className="text-xs text-gray-500 px-2">
+                      No labels available
+                    </p>
+                  ) : (
+                    <DropdownMenuRadioGroup
+                      value={position}
+                      onValueChange={(value) => setPosition(value)}
+                      className="text-xs"
+                    >
+                      {labels.map((label) => (
+                        <DropdownMenuRadioItem
+                          key={label}
+                          value={label}
+                          className="text-xs"
+                        >
+                          {label}
+                        </DropdownMenuRadioItem>
+                      ))}
+                    </DropdownMenuRadioGroup>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  size="xs"
-                  variant="outline"
-                  disabled={loading || labels.length === 0}
-                  className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md border-gray-300 shadow-sm"
-                >
-                  <ListFilter className="w-4 h-4 text-gray-500" /> {position}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-40 p-2 shadow-md rounded-md">
-                <DropdownMenuLabel className="flex justify-center text-xs font-medium text-gray-700">
-                  Select Labels
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {error ? (
-                  <p className="text-xs text-red-500 px-2">{error}</p>
-                ) : labels.length === 0 ? (
-                  <p className="text-xs text-gray-500 px-2">
-                    No labels available
+            <div className="p-4">
+              <div className="relative">
+                <Input
+                  placeholder="Search numbers..."
+                  className="pl-8 pr-3 py-2 text-xs rounded-md border focus:ring-2 focus:ring-blue-500/30 outline-none placeholder:text-xs"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+              </div>
+            </div>
+
+            <div className="h-full overflow-hidden">
+              <div className="overflow-y-auto max-h-96 custom-scrollbar">
+                {loading ? (
+                  <p>Loading...</p>
+                ) : chatsLists.length === 0 ? (
+                  <p className="text-center text-xs font-semibold">
+                    No results found
                   </p>
                 ) : (
-                  <DropdownMenuRadioGroup
-                    value={position}
-                    onValueChange={(value) => setPosition(value)}
-                    className="text-xs"
-                  >
-                    {labels.map((label) => (
-                      <DropdownMenuRadioItem key={label} value={label} className="text-xs">
-                        {label}
-                      </DropdownMenuRadioItem>
-                    ))}
-                  </DropdownMenuRadioGroup>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-          <div className="p-4">
-            <div className="relative">
-              <Input
-                placeholder="Search numbers..."
-                className="pl-8 pr-3 py-2 text-xs rounded-md border focus:ring-2 focus:ring-blue-500/30 outline-none placeholder:text-xs"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            </div>
-          </div>
-
-          <div className="h-full overflow-hidden">
-            <div className="overflow-y-auto max-h-96 custom-scrollbar">
-              {loading ? (
-                <p>Loading...</p>
-              ) : chatsLists.length === 0 ? (
-                <p className="text-center text-xs font-semibold">No results found</p>
-              ) : (
-                chatsLists.map((chatinfo) => (
-                  <div
-                    key={chatinfo.recentMessage._id}
-                    className={`border-b cursor-pointer transition-colors hover:bg-muted ${
-                      selectedPhoneNumber === chatinfo.phoneNumber ? "bg-muted" : ""
-                    }`}
-                    onClick={() => handleChatClick(chatinfo)}
-                  >
-                    <div className="flex p-4 items-center py-4 space-x-2">
-                      {/* Avatar */}
-                      <div className="relative">
-                        <Avatar className="border-2 border-blue-300 shadow-md rounded-full">
-                          <AvatarImage
-                            src={getCachedImageUrl(chatinfo.recentMessage._id)}
-                            alt="Avatar"
-                          />
-                          <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
-                        {/* Platform Icon */}
-                        <div className="absolute bottom-0 right-0 h-4 w-4 bg-white rounded-full p-0.5 shadow-md flex items-center justify-center">
-                          {getPlatformIcon(chatinfo.platform)}
-                        </div>
-                      </div>
-
-                      <div className="w-40 overflow-hidden">
-                        <div className="flex space-x-1">
-                          <p className={`text-xs ${chatinfo.recentMessage.isRead ? "font-normal" : "font-bold"}`}>
-                            {chatinfo.phoneNumber}
-                          </p>
-                          <p>
-                            {chatinfo.recentMessage.isSender ? (
-                              <ArrowUpRight className="w-3 h-3 text-blue-500" />
-                            ) : (
-                              <ArrowDownLeft className="w-3 h-3 text-green-500" />
-                            )}
-                          </p>
-                          <p className="text-xs font-bold text-green-500">6</p>
+                  chatsLists.map((chatinfo) => (
+                    <div
+                      key={chatinfo.recentMessage._id}
+                      className={`border-b cursor-pointer transition-colors hover:bg-muted ${
+                        selectedPhoneNumber === chatinfo.phoneNumber
+                          ? "bg-muted"
+                          : ""
+                      }`}
+                      onClick={() => handleChatClick(chatinfo)}
+                    >
+                      <div className="flex p-4 items-center py-4 space-x-2">
+                        {/* Avatar */}
+                        <div className="relative">
+                          <Avatar className="border-2 border-blue-300 shadow-md rounded-full">
+                            <AvatarImage
+                              src={getCachedImageUrl(
+                                chatinfo.recentMessage._id
+                              )}
+                              alt="Avatar"
+                            />
+                            <AvatarFallback>CN</AvatarFallback>
+                          </Avatar>
+                          {/* Platform Icon */}
+                          <div className="absolute bottom-0 right-0 h-4 w-4 bg-white rounded-full p-0.5 shadow-md flex items-center justify-center">
+                            {getPlatformIcon(chatinfo.platform)}
+                          </div>
                         </div>
 
-                        <p className={`text-xs mt-1 text-muted-foreground truncate ${!chatinfo.recentMessage.isRead ? "font-bold" : "font-normal"}`}>
-                          {chatinfo.recentMessage.text}
+                        <div className="w-40 overflow-hidden">
+                          <div className="flex space-x-1">
+                            <p
+                              className={`text-xs ${
+                                chatinfo.recentMessage.isRead
+                                  ? "font-normal"
+                                  : "font-bold"
+                              }`}
+                            >
+                              {chatinfo.phoneNumber}
+                            </p>
+                            <p>
+                              {chatinfo.recentMessage.isSender ? (
+                                <ArrowUpRight className="w-3 h-3 text-blue-500" />
+                              ) : (
+                                <ArrowDownLeft className="w-3 h-3 text-green-500" />
+                              )}
+                            </p>
+                            <p className="text-xs font-bold text-green-500">
+                              6
+                            </p>
+                          </div>
+
+                          <p
+                            className={`text-xs mt-1 text-muted-foreground truncate ${
+                              !chatinfo.recentMessage.isRead
+                                ? "font-bold"
+                                : "font-normal"
+                            }`}
+                          >
+                            {chatinfo.recentMessage.text}
+                          </p>
+                        </div>
+
+                        <p className="text-xs text-gray-400">3m</p>
+                        <p className="text-xs text-gray-400">
+                          <Star className="w-3 h-3" />
                         </p>
                       </div>
-
-                      <p className="text-xs text-gray-400">3m</p>
                     </div>
-                  </div>
-                ))
-              )}
+                  ))
+                )}
+              </div>
             </div>
+          </Card>
+          {/* </div> */}
+
+          {/* Chat Section */}
+          <div className="flex flex-1 flex-col h-full overflow-hidden">
+            {isActiveChatSelected && (
+              <Chatsmessage
+                image={
+                  selectedChatInfo?.recentMessage?._id
+                    ? getCachedImageUrl(selectedChatInfo.recentMessage._id)
+                    : undefined
+                }
+                phoneNumber={selectedPhoneNumber}
+                sendMessage={(phoneNumber, text, chatId) =>
+                  webSocketRef.current.sendMessage(phoneNumber, text, chatId)
+                }
+                type={selectedChatInfo?.recentMessage?.type || ""}
+                text={selectedChatInfo?.recentMessage?.text || ""}
+                time={selectedChatInfo?.recentMessage?.time || ""}
+                onCampaignHistoryUpdate={handleCampaignHistoryUpdate}
+              />
+            )}
           </div>
-        </Card>
-      {/* </div> */}
 
-      {/* Chat Section */}
-      <div className="flex flex-1 flex-col h-full overflow-hidden">
-        {isActiveChatSelected && (
-          <Chatsmessage
-            image={
-              selectedChatInfo?.recentMessage?._id
-                ? getCachedImageUrl(selectedChatInfo.recentMessage._id)
-                : undefined
-            }
-            phoneNumber={selectedPhoneNumber}
-            sendMessage={(phoneNumber, text, chatId) =>
-              webSocketRef.current.sendMessage(phoneNumber, text, chatId)
-            }
-            type={selectedChatInfo?.recentMessage?.type || ""}
-            text={selectedChatInfo?.recentMessage?.text || ""}
-            time={selectedChatInfo?.recentMessage?.time || ""}
-            onCampaignHistoryUpdate={handleCampaignHistoryUpdate}
-          />
-        )}
-      </div>
+          {/* Chat Details */}
+          <div className="w-[25%] md:w-[25%] md:rounded-lg overflow-auto ">
+            {isActiveChatSelected && selectedPhoneNumber && (
+              <Chatdetails
+                phoneNumber={selectedPhoneNumber}
+                campaignHistory={campaignHistory || []}
+              />
+            )}
+          </div>
 
-
-      {/* Chat Details */}
-      <div className="w-[25%] md:w-[25%] md:rounded-lg overflow-auto ">
-        {isActiveChatSelected && selectedPhoneNumber && (
-          <Chatdetails phoneNumber={selectedPhoneNumber} campaignHistory={campaignHistory || []} />
-        )}
-      </div>
-
-      {!isActiveChatSelected && (
-        <div className="flex justify-center items-center h-full w-full">
-          <p className="text-gray-500 text-lg whitespace-nowrap text-center">
-            Select a chat to view details
-          </p>
+          {!isActiveChatSelected && (
+            <div className="flex justify-center items-center h-full w-full">
+              <p className="text-gray-500 text-lg whitespace-nowrap text-center">
+                Select a chat to view details
+              </p>
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  </AgentsLayout>
-</Fragment>
-
+      </AgentsLayout>
+    </Fragment>
   );
 }
