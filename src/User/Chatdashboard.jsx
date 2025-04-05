@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/card";
 import WebSocketComponent from "@/Routes/Websocket";
 
-
 import { getChatsNumbers } from "@/Service/auth.service";
 import ChatsLabelAndProgress from "./ChatsLabelAndProgress";
 import AgentsLayout from "@/Layout/NewLayout";
@@ -28,8 +27,6 @@ export default function ChatDashboard() {
   const [activeChart, setActiveChart] = useState("desktop");
   const [chatsLists, setChatsLists] = useState([]);
   const [loading, setLoading] = useState(true);
-
-
 
   //   useEffect(() => {
   //     const logins = Cookies.get("logins")
@@ -142,8 +139,6 @@ export default function ChatDashboard() {
     { date: "2024-06-30", desktop: 446, mobile: 400 },
   ];
 
-
-
   const chartConfig = {
     views: {
       label: "Page Views",
@@ -166,156 +161,151 @@ export default function ChatDashboard() {
     []
   );
 
+  const fetchChatsNumber = async () => {
+    try {
+      const response = await getChatsNumbers();
+      setChatsLists(response || []);
+      console.log("Fetched chats:", response);
+      console.log(response.length, "line number 225");
 
-    const fetchChatsNumber = async () => {
-      try {
-        const response = await getChatsNumbers();
-        setChatsLists(response || []);
-        console.log("Fetched chats:", response);
-        console.log(response.length, "line number 225");
-        
-        response?.forEach((chat) => {
-          console.log(chat.recentMessage?.isRead, "isRead");
-        });
-      } catch (error) {
-        console.error("Error fetching chat data:", error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    useEffect(() => {
-      fetchChatsNumber();
-    }, []);
+      response?.forEach((chat) => {
+        console.log(chat.recentMessage?.isRead, "isRead");
+      });
+    } catch (error) {
+      console.error("Error fetching chat data:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchChatsNumber();
+  }, []);
 
   return (
+    <AgentsLayout>
+      <WebSocketComponent />
+      <div className="flex  flex-col lg:flex-row" >
+        <div className="flex-1  p-2 space-y-2">
+          <div className="grid  grid-cols-1  md:grid-cols-2 lg:grid-cols-2 gap-6">
+            <div className="bg-pink-100 rounded-sm">
+            <MetricCard
+              title="Total Chats"
+              value={chatsLists.length}
+              change="+20% from last month"
+              icon={<MessageSquare />}
+            />
+            </div>
 
-   <AgentsLayout>
+            <div className="bg-green-100 rounded-sm">
+            <MetricCard
+              title="Chat Growth"
+              value="12%"
+              change="+2% from last week"
+              icon={<TrendingUp />}
+            />
 
+            </div>
+          </div>
+          {/* Chats Label And Progress */}
 
-     <WebSocketComponent />
-     <div className="flex  flex-col lg:flex-row">
-       <div className="flex-1  p-2 space-y-2">
-         <div className="grid  grid-cols-1  md:grid-cols-2 lg:grid-cols-2 gap-6">
-           <MetricCard
-             title="Total Chats"
-             value={chatsLists.length}
-             change="+20% from last month"
-             icon={<MessageSquare />}
-           />
+          <ChatsLabelAndProgress />
 
-           <MetricCard
-             title="Chat Growth"
-             value="12%"
-             change="+2% from last week"
-             icon={<TrendingUp />}
-           />
-         </div>
-{/* Chats Label And Progress */}
+          <div className=" rounded-lg shadow p-6">
+            <h2 className="text-xl font-semibold mb-4">Chat Analytics</h2>
 
-     <ChatsLabelAndProgress/>
-
-
-
-         <div className=" rounded-lg shadow p-6">
-           <h2 className="text-xl font-semibold mb-4">Chat Analytics</h2>
-
-           <div className="rounded-lg ">
-             <Card className="">
-               <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
-                 <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-                   <CardTitle></CardTitle>
-                   <CardDescription></CardDescription>
-                 </div>
-                 <div className="flex">
-                   {["desktop", "mobile"].map((key) => {
-                     const chart = key;
-                     return (
-                       <button
-                         key={chart}
-                         data-active={activeChart === chart}
-                         className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
-                         onClick={() => setActiveChart(chart)}
-                       >
-                         <span className="text-xs text-muted-foreground">
-                           {chartConfig[chart].label}
-                         </span>
-                       </button>
-                     );
-                   })}
-                 </div>
-               </CardHeader>
-               <CardContent className="px-2 sm:p-6">
-                 <ChartContainer
-                   config={chartConfig}
-                   className="aspect-auto h-[250px] w-full"
-                 >
-                   <BarChart
-                     accessibilityLayer
-                     data={chartData}
-                     margin={{
-                       left: 12,
-                       right: 12,
-                     }}
-                   >
-                     <CartesianGrid vertical={false} />
-                     <XAxis
-                       dataKey="date"
-                       tickLine={false}
-                       axisLine={false}
-                       tickMargin={8}
-                       minTickGap={32}
-                       tickFormatter={(value) => {
-                         const date = new Date(value);
-                         return date.toLocaleDateString("en-US", {
-                           month: "short",
-                           day: "numeric",
-                         });
-                       }}
-                     />
-                     <ChartTooltip
-                       content={
-                         <ChartTooltipContent
-                           className="w-[150px]"
-                           nameKey="views"
-                           labelFormatter={(value) => {
-                             return new Date(value).toLocaleDateString(
-                               "en-US",
-                               {
-                                 month: "short",
-                                 day: "numeric",
-                                 year: "numeric",
-                               }
-                             );
-                           }}
-                         />
-                       }
-                     />
-                     <Bar
-                       dataKey={activeChart}
-                       fill={`var(--color-${activeChart})`}
-                     />
-                   </BarChart>
-                 </ChartContainer>
-               </CardContent>
-             </Card>
-           </div>
-         </div>
-       </div>
-     </div>
-
-
- 
-   </AgentsLayout>
-
-
-
+            <div className="rounded-lg ">
+              <Card className="">
+                <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
+                  <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
+                    <CardTitle></CardTitle>
+                    <CardDescription></CardDescription>
+                  </div>
+                  <div className="flex">
+                    {["desktop", "mobile"].map((key) => {
+                      const chart = key;
+                      return (
+                        <button
+                          key={chart}
+                          data-active={activeChart === chart}
+                          className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
+                          onClick={() => setActiveChart(chart)}
+                        >
+                          <span className="text-xs text-muted-foreground">
+                            {chartConfig[chart].label}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </CardHeader>
+                <CardContent className="px-2 sm:p-6">
+                  <ChartContainer
+                    config={chartConfig}
+                    className="aspect-auto h-[250px] w-full"
+                  >
+                    <BarChart
+                      accessibilityLayer
+                      data={chartData}
+                      margin={{
+                        left: 12,
+                        right: 12,
+                      }}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="date"
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={8}
+                        minTickGap={32}
+                        tickFormatter={(value) => {
+                          const date = new Date(value);
+                          return date.toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          });
+                        }}
+                      />
+                      <ChartTooltip
+                        content={
+                          <ChartTooltipContent
+                            className="w-[150px]"
+                            nameKey="views"
+                            labelFormatter={(value) => {
+                              return new Date(value).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                }
+                              );
+                            }}
+                          />
+                        }
+                      />
+                      <Bar
+                        dataKey={activeChart}
+                        fill={`var(--color-${activeChart})`}
+                      />
+                    </BarChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </div>
+    </AgentsLayout>
   );
 }
 
+
+
 function MetricCard({ title, value, change, icon }) {
   return (
-    <div className=" rounded-lg shadow p-6">
+    <div className=" shadow p-6">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-medium text-gray-600">{title}</h3>
         {icon}

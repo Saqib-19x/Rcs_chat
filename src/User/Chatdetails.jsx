@@ -129,7 +129,7 @@ export default function Chatdetails({ phoneNumber, campaignHistory }) {
           <Separator />
 
           <CardContent className="p-4">
-            <h2 className="text-md font-semibold mb-2">
+            <h2 className="text-md text-blue-500 font-semibold mb-2">
               We have a new feature in our chats
             </h2>
             <p className="text-xs text-muted-foreground">
@@ -141,7 +141,7 @@ export default function Chatdetails({ phoneNumber, campaignHistory }) {
           <Separator />
 
           <div className="bg-muted/50 p-4 rounded-lg">
-            <p className="mt-2 font-semibold text-black">Quick Action</p>
+            <p className="mt-2 font-semibold text-blue-500">Quick Action</p>
             {/* Labels Dropdown */}
             <div className="mt-4">
               <Label className="text-sm font-medium">Assign Label</Label>
@@ -185,11 +185,11 @@ export default function Chatdetails({ phoneNumber, campaignHistory }) {
                       className="flex items-start gap-3 relative"
                     >
                       <div className="flex flex-col items-center">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                          <CheckCircle2 className="w-4 h-4 text-primary" />
+                        <div className="w-8 h-8 rounded-full bg-green-400 flex items-center justify-center">
+                          <CheckCircle2 className="w-4 h-4  text-primary" />
                         </div>
                         {index !== campaignHistory.campaigns.length - 1 && (
-                          <div className="w-0.5 h-full bg-border absolute top-8 left-4 -translate-x-1/2" />
+                          <div className="w-0.5 h-full bg-blue-400 absolute top-8 left-4 -translate-x-1/2" />
                         )}
                       </div>
                       <div className="flex-1">

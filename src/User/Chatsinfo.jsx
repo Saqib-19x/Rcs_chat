@@ -226,6 +226,11 @@ export default function ChatInfo() {
     }
   };
 
+//   const [TrueStar, setTrueStar] = useState(false); 
+// const handleSetStar = () => {
+//   setTrueStar(true);
+// }
+
   return (
     <Fragment>
       <AgentsLayout>

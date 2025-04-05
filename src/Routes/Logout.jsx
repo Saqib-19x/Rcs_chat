@@ -11,9 +11,6 @@ import {
 } from "@/components/ui/alert-dialog"
 
 
-
-
-
 export default function LogoutDialog({ open, onLogout }) {
     return (
         <AlertDialog open={open}>

@@ -206,6 +206,8 @@ export default function Chatsmessage({
     const currentHistory = chatHistory[phoneNumber] || [];
     const combinedMessages = [...currentHistory, ...currentMessages];
 
+    
+
     return combinedMessages.map((message, index) => (
       <Message
         key={`message-${index}`}
@@ -245,6 +247,15 @@ export default function Chatsmessage({
     );
   }
 
+  const [file, setFile] = useState(null); 
+
+  const handleFileChange = (event) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setFile(event.target.files[0]);
+    }
+  };
+
+  
   return (
     <Fragment>
       <div className="p-1 w-full h-full flex flex-col ">
@@ -283,21 +294,24 @@ export default function Chatsmessage({
         </div>
 
         {/* Message Input Form */}
-        <div className="px-4 sticky bottom-0 z-10  text-xs  ">
+        <div className="px-4  sticky  bottom-0 z-10  text-xs  ">
           <form
             onSubmit={handleChatsSubmit}
-            className="flex items-center   rounded-md p-3  border  "
+            className="flex items-center  rounded-md p-4  border "
           >
-            <TooltipProvider>
+            <TooltipProvider >
               {/* Paperclip Icon */}
               <Tooltip>
                 <TooltipTrigger asChild>
+
                   <button
                     type="button"
                     className="p-2 text-gray-500 hover:text-gray-700"
                   >
                     <Paperclip className="w-3 h-3" />
+                    
                   </button>
+
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Coming Soon</p>
@@ -315,7 +329,7 @@ export default function Chatsmessage({
                 })
               }
               placeholder="Type a message..."
-              className="flex-1 text-xs outline-none placeholder:text-xs "
+              className="flex-1 text-xs  outline-none placeholder:text-xs "
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
@@ -327,7 +341,7 @@ export default function Chatsmessage({
             {/* Send Button */}
             <Button
               type="submit"
-              className=" text-xs"
+              className=" text-xs  bg-blue-400 hover:bg-blue-300 "
               size="sm"
               variant="outline"
             >
@@ -365,7 +379,7 @@ const Message = ({ message, isIncoming, avatarSrc }) => {
         {/* Message Bubble */}
         <div
           className={`rounded-lg px-4 py-2 text-sm border ${
-            isIncoming ? "bg-gray-100 text-gray-800" : "bg-black text-white"
+            isIncoming ? " bg-gray-200 text-gray-800" : "bg-blue-200 text-black"
           }`}
         >
           <p className="break-all truncate text-ellipsis text-xs text-wrap">
@@ -390,6 +404,7 @@ const Message = ({ message, isIncoming, avatarSrc }) => {
     </div>
   );
 };
+
 // chat message
 
 // hiiii message
